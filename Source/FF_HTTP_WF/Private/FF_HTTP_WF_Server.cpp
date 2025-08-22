@@ -40,12 +40,21 @@ bool AHTTP_Server_WF::HTTP_Server_Start()
 			this->Delegate_Http_Request.Broadcast(Request);
 		};
 
-	int Result = 0;
-
 	try
 	{
 		this->WF_Server = MakeShared<WFHttpServer, ESPMode::ThreadSafe>(Callback);
-		Result = this->WF_Server->start(this->Port_HTTP);
+		const int Result = this->WF_Server->start(this->Port_HTTP);
+
+		if (Result != 0)
+		{
+			return false;
+		}
+
+		this->bIsServerStarted = true;
+		this->Delegate_HTTP_Start.Broadcast();
+		this->OnHttWf_Start();
+		
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -53,19 +62,6 @@ bool AHTTP_Server_WF::HTTP_Server_Start()
 		FString ExceptionString = Exception.what();
 		UE_LOG(LogTemp, Warning, TEXT("FF HTTP WF : Thread->Callback_HTTP_Start : %s"), *ExceptionString);
 
-		return false;
-	}
-
-	if (Result == 0)
-	{
-		this->Delegate_HTTP_Start.Broadcast();
-		this->OnHttWf_Start();
-		this->bIsServerStarted = true;
-		return true;
-	}
-
-	else
-	{
 		return false;
 	}
 }
@@ -94,7 +90,7 @@ FString AHTTP_Server_WF::GetListenAddress()
 
 	char IP_Address[NI_MAXHOST];
 	char Port[NI_MAXSERV];
-	int ErrorCode = getnameinfo(&SocketAddress, sizeof(SocketAddress), IP_Address, sizeof(IP_Address), Port, sizeof(Port), NI_NUMERICHOST | NI_NUMERICSERV);
+	const int ErrorCode = getnameinfo(&SocketAddress, sizeof(SocketAddress), IP_Address, sizeof(IP_Address), Port, sizeof(Port), NI_NUMERICHOST | NI_NUMERICSERV);
 
 	if (ErrorCode != 0)
 	{

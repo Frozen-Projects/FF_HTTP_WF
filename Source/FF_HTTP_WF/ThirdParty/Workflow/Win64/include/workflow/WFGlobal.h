@@ -80,7 +80,7 @@ static constexpr struct WFGlobalSettings GLOBAL_SETTINGS_DEFAULT =
 
 /**
  * @brief      Reset Workflow Library Global Setting
- * @param[in]  settings          custom settings pointer
+ * [in]  settings          custom settings pointer
 */
 extern void WORKFLOW_library_init(const struct WFGlobalSettings *settings);
 
@@ -93,14 +93,14 @@ class WFGlobal
 public:
 	/**
 	 * @brief      register default port for one scheme string
-	 * @param[in]  scheme           scheme string
-	 * @param[in]  port             default port value
+	 * [in]  scheme           scheme string
+	 * [in]  port             default port value
 	 * @warning    No effect when scheme is "http"/"https"/"redis"/"rediss"/"mysql"/"kafka"
 	 */
 	static void register_scheme_port(const std::string& scheme, unsigned short port);
 	/**
 	 * @brief      get default port string for one scheme string
-	 * @param[in]  scheme           scheme string
+	 * [in]  scheme           scheme string
 	 * @return     port string const pointer
 	 * @retval     NULL             fail, scheme not found
 	 * @retval     not NULL         success

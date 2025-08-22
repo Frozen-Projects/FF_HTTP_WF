@@ -9,7 +9,7 @@ public class FF_HTTP_WF : ModuleRules
 	{
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        UndefinedIdentifierWarningLevel = WarningLevel.Off;
+        CppCompileWarningSettings.UndefinedIdentifierWarningLevel = WarningLevel.Off;
         bEnableExceptions = true;
         bUseRTTI = true;
 

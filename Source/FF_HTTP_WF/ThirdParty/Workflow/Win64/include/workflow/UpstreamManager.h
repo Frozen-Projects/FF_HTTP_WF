@@ -81,8 +81,8 @@ class UpstreamManager
 public:
 	/**
 	 * @brief      MODE 0: round-robin select
-	 * @param[in]  name             upstream name
-	 * @param[in]  try_another      when first choice is failed, try another one or not
+	 * [in]  name             upstream name
+	 * [in]  try_another      when first choice is failed, try another one or not
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -96,8 +96,8 @@ public:
 
 	/**
 	 * @brief      MODE 1: consistent-hashing select
-	 * @param[in]  name             upstream name
-	 * @param[in]  consitent_hash   consistent-hash functional
+	 * [in]  name             upstream name
+	 * [in]  consitent_hash   consistent-hash functional
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -109,8 +109,8 @@ public:
 
 	/**
 	 * @brief      MODE 2: weighted-random select
-	 * @param[in]  name             upstream name
-	 * @param[in]  try_another      when first choice is failed, try another one or not
+	 * [in]  name             upstream name
+	 * [in]  try_another      when first choice is failed, try another one or not
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -124,10 +124,10 @@ public:
 
 	/**
 	 * @brief      MODE 3: manual select
-	 * @param[in]  name             upstream name
-	 * @param[in]  select           manual select functional, just tell us main-index.
-	 * @param[in]  try_another      when first choice is failed, try another one or not
-	 * @param[in]  consitent_hash   consistent-hash functional
+	 * [in]  name             upstream name
+	 * [in]  select           manual select functional, just tell us main-index.
+	 * [in]  try_another      when first choice is failed, try another one or not
+	 * [in]  consitent_hash   consistent-hash functional
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -144,7 +144,7 @@ public:
 
 	/**
 	 * @brief      MODE 4: VNSWRR select
-	 * @param[in]  name             upstream name
+	 * [in]  name             upstream name
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -154,7 +154,7 @@ public:
 
 	/**
 	 * @brief      Delete one upstream
-	 * @param[in]  name             upstream name
+	 * [in]  name             upstream name
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, not found
@@ -164,8 +164,8 @@ public:
 public:
 	/**
 	 * @brief      Add server into one upstream, with default config
-	 * @param[in]  name             upstream name
-	 * @param[in]  address          ip OR host OR ip:port OR host:port OR /unix-domain-socket
+	 * [in]  name             upstream name
+	 * [in]  address          ip OR host OR ip:port OR host:port OR /unix-domain-socket
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -176,9 +176,9 @@ public:
 
 	/**
 	 * @brief      Add server into one upstream, with custom config
-	 * @param[in]  name             upstream name
-	 * @param[in]  address          ip OR host OR ip:port OR host:port OR /unix-domain-socket
-	 * @param[in]  address_params   custom config for this target server
+	 * [in]  name             upstream name
+	 * [in]  address          ip OR host OR ip:port OR host:port OR /unix-domain-socket
+	 * [in]  address_params   custom config for this target server
 	 * @return     success/fail
 	 * @retval     0                success
 	 * @retval     -1               fail, more info see errno
@@ -191,8 +191,8 @@ public:
 
 	/**
 	 * @brief      Remove server from one upstream
-	 * @param[in]  name             upstream name
-	 * @param[in]  address          same as address when add by upstream_add_server
+	 * [in]  name             upstream name
+	 * [in]  address          same as address when add by upstream_add_server
 	 * @return     success/fail
 	 * @retval     >=0              success, the amount of being removed server
 	 * @retval     -1               fail, upstream name not found
@@ -203,7 +203,7 @@ public:
 
 	/**
 	 * @brief      get all main servers address list from one upstream
-	 * @param[in]  name             upstream name
+	 * [in]  name             upstream name
 	 * @return     all main servers' address list
 	 * @warning    If server servers has the same address in this upstream, then will appear in the vector multiply times
 	 */

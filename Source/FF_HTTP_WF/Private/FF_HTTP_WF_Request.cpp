@@ -2,191 +2,10 @@
 
 int UHttpRequestWf::ConvertToWfStatus(EWfStatusCodes In_Status)
 {
-	switch (In_Status)
-	{
-	case EWfStatusCodes::Continue_100:
-		return 100;
-
-	case EWfStatusCodes::Switching_Protocols_101:
-		return 101;
-
-	case EWfStatusCodes::Processing_102:
-		return 102;
-
-	case EWfStatusCodes::OK_200:
-		return 200;
-
-	case EWfStatusCodes::Created_201:
-		return 201;
-
-	case EWfStatusCodes::Accepted_202:
-		return 202;
-
-	case EWfStatusCodes::Non_Authoratative_Information_203:
-		return 203;
-
-	case EWfStatusCodes::No_Content_204:
-		return 204;
-
-	case EWfStatusCodes::Reset_Content_205:
-		return 205;
-
-	case EWfStatusCodes::Partial_Content_206:
-		return 206;
-
-	case EWfStatusCodes::Multi_Status_207:
-		return 207;
-
-	case EWfStatusCodes::Already_Reported_208:
-		return 208;
-
-	case EWfStatusCodes::Im_Used_226:
-		return 226;
-
-	case EWfStatusCodes::Multiple_Choice_300:
-		return 300;
-
-	case EWfStatusCodes::Moved_Permanently_301:
-		return 301;
-
-	case EWfStatusCodes::Found_302:
-		return 302;
-
-	case EWfStatusCodes::See_Other_303:
-		return 303;
-
-	case EWfStatusCodes::Not_Modified_304:
-		return 304;
-
-	case EWfStatusCodes::Use_Proxy_305:
-		return 305;
-
-	case EWfStatusCodes::Switch_Proxy_306:
-		return 306;
-
-	case EWfStatusCodes::Temporary_Redirect_307:
-		return 307;
-
-	case EWfStatusCodes::Permanent_Redirect_308:
-		return 308;
-
-	case EWfStatusCodes::Bad_Request_400:
-		return 400;
-
-	case EWfStatusCodes::Unauthorized_401:
-		return 401;
-
-	case EWfStatusCodes::Payment_Required_402:
-		return 402;
-
-	case EWfStatusCodes::Forbidden_403:
-		return 403;
-
-	case EWfStatusCodes::Not_Found_404:
-		return 404;
-
-	case EWfStatusCodes::Method_Not_Allowed_405:
-		return 405;
-
-	case EWfStatusCodes::Not_Acceptable_406:
-		return 406;
-
-	case EWfStatusCodes::Proxy_Authentication_Required_407:
-		return 407;
-
-	case EWfStatusCodes::Request_Timeout_408:
-		return 408;
-
-	case EWfStatusCodes::Conflict_409:
-		return 409;
-
-	case EWfStatusCodes::Gone_410:
-		return 410;
-
-	case EWfStatusCodes::Lenght_Required_411:
-		return 411;
-
-	case EWfStatusCodes::Precondition_Failed_412:
-		return 412;
-
-	case EWfStatusCodes::Payload_Too_Large_413:
-		return 413;
-
-	case EWfStatusCodes::Uri_Too_Long_414:
-		return 414;
-
-	case EWfStatusCodes::Unsupported_Media_Type_415:
-		return 415;
-
-	case EWfStatusCodes::Range_Not_Satisfiable_416:
-		return 416;
-
-	case EWfStatusCodes::Expectation_Failed_417:
-		return 417;
-
-	case EWfStatusCodes::Misdirected_Request_421:
-		return 421;
-
-	case EWfStatusCodes::Unprocessable_Entity_422:
-		return 422;
-
-	case EWfStatusCodes::Locked_423:
-		return 423;
-	
-	case EWfStatusCodes::Failed_Dependency_424:
-		return 424;
-
-	case EWfStatusCodes::Upgrade_Required_426:
-		return 426;
-
-	case EWfStatusCodes::Precondition_Required_428:
-		return 428;
-
-	case EWfStatusCodes::Too_Many_Requests_429:
-		return 429;
-
-	case EWfStatusCodes::Request_Header_Fields_Too_Large_431:
-		return 431;
-
-	case EWfStatusCodes::Unavailable_For_Legal_Reasons_451:
-		return 451;
-
-	case EWfStatusCodes::Internal_Server_Error_500:
-		return 500;
-
-	case EWfStatusCodes::Not_Implemented_501:
-		return 501;
-
-	case EWfStatusCodes::Bad_Gateway_502:
-		return 502;
-
-	case EWfStatusCodes::Service_Unavailable_503:
-		return 503;
-
-	case EWfStatusCodes::Gateway_Timeout_504:
-		return 504;
-
-	case EWfStatusCodes::Http_Version_Not_Supported_505:
-		return 505;
-
-	case EWfStatusCodes::Variant_Also_Negotiates_506:
-		return 506;
-
-	case EWfStatusCodes::Insufficient_Storage_507:
-		return 507;
-
-	case EWfStatusCodes::Loop_Detected_508:
-		return 508;
-
-	case EWfStatusCodes::Not_Extended_510:
-		return 510;
-
-	case EWfStatusCodes::Network_Authentication_Required_511:
-		return 511;
-
-	default:
-		return 404;
-	}
+	const FString Status_String = UEnum::GetValueAsName(In_Status).ToString();
+	TArray<FString> Array_Sections = UKismetStringLibrary::ParseIntoArray(Status_String, "_");
+	const FString Code_String = Array_Sections.Last();
+	return FCString::Atoi(*Code_String);
 }
 
 const char* UHttpRequestWf::ConvertToWfMime(EWfContentTypes In_ContenTypes)
@@ -418,8 +237,6 @@ bool UHttpRequestWf::SendResponse_String(TMap<FString, FString> In_Headers, FStr
 		return false;
 	}
 
-	bool bIsSuccessful = false;
-
 	try
 	{
 		protocol::HttpResponse* TempResponse = Task->get_resp();
@@ -440,7 +257,7 @@ bool UHttpRequestWf::SendResponse_String(TMap<FString, FString> In_Headers, FStr
 		HttpUtil::set_response_status(this->Task->get_resp(), this->ConvertToWfStatus(In_Status));
 
 		// Set Response as String.
-		bIsSuccessful = TempResponse->append_output_body(TCHAR_TO_UTF8(*In_Response));
+		return TempResponse->append_output_body(TCHAR_TO_UTF8(*In_Response));
 	}
 
 	catch (const std::exception& Exception)
@@ -450,8 +267,6 @@ bool UHttpRequestWf::SendResponse_String(TMap<FString, FString> In_Headers, FStr
 
 		return false;
 	}
-
-	return bIsSuccessful;
 }
 
 bool UHttpRequestWf::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArray<uint8> In_Response, EWfStatusCodes In_Status, EWfContentTypes In_ContentTypes)
@@ -465,8 +280,6 @@ bool UHttpRequestWf::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArr
 	{
 		return false;
 	}
-
-	bool bIsSuccessful = false;
 
 	try
 	{
@@ -488,7 +301,7 @@ bool UHttpRequestWf::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArr
 		HttpUtil::set_response_status(this->Task->get_resp(), this->ConvertToWfStatus(In_Status));
 
 		// Set Response as Buffer.
-		bIsSuccessful = TempResponse->append_output_body(In_Response.GetData(), In_Response.Num());
+		return TempResponse->append_output_body(In_Response.GetData(), In_Response.Num());
 	}
 
 	catch (const std::exception& Exception)
@@ -498,8 +311,6 @@ bool UHttpRequestWf::SendResponse_Buffer(TMap<FString, FString> In_Headers, TArr
 
 		return false;
 	}
-
-	return bIsSuccessful;
 }
 
 bool UHttpRequestWf::GetRequestUri(FString& Out_Uri)
@@ -509,11 +320,17 @@ bool UHttpRequestWf::GetRequestUri(FString& Out_Uri)
 		return false;
 	}
 
-	const char* RequestUri = nullptr;
-
 	try
 	{
-		RequestUri = this->Task->get_req()->get_request_uri();
+		const char* RequestUri = this->Task->get_req()->get_request_uri();
+
+		if (strlen(RequestUri) <= 0)
+		{
+			return false;
+		}
+
+		Out_Uri = RequestUri;
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -523,14 +340,6 @@ bool UHttpRequestWf::GetRequestUri(FString& Out_Uri)
 
 		return false;
 	}
-
-	if (strlen(RequestUri) <= 0)
-	{
-		return false;
-	}
-
-	Out_Uri = RequestUri;
-	return true;
 }
 
 bool UHttpRequestWf::GetRequestQuery(TMap<FString, FString>& Out_Query, FString& Query_Title)
@@ -564,7 +373,7 @@ bool UHttpRequestWf::GetRequestQuery(TMap<FString, FString>& Out_Query, FString&
 	}
 
 	TArray<FString> Sections_Query = UKismetStringLibrary::ParseIntoArray(LastSection, "?");
-	int SectionSize = Sections_Query.Num();
+	const int SectionSize = Sections_Query.Num();
 
 	// If URI contains multiple param declaration or doesn't contain at all, return false. 
 	if (SectionSize == 0 || SectionSize > 2)
@@ -639,13 +448,13 @@ bool UHttpRequestWf::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 		return false;
 	}
 
-	std::string TempName;
-	std::string TempValue;
-	TMap<FString, FString> Temp_Headers;
-
 	try
 	{
+		std::string TempName;
+		std::string TempValue;
+		TMap<FString, FString> Temp_Headers;
 		protocol::HttpHeaderCursor req_cursor(this->Task->get_req());
+		
 		while (req_cursor.next(TempName, TempValue))
 		{
 			FString Key = UTF8_TO_TCHAR(TempName.c_str());
@@ -653,6 +462,14 @@ bool UHttpRequestWf::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 
 			Temp_Headers.Add(Key, Value);
 		}
+
+		if (Temp_Headers.IsEmpty())
+		{
+			return false;
+		}
+
+		Out_Headers = Temp_Headers;
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -662,14 +479,6 @@ bool UHttpRequestWf::GetAllHeaders(TMap<FString, FString>& Out_Headers)
 
 		return false;
 	}
-
-	if (Temp_Headers.IsEmpty())
-	{
-		return false;
-	}
-
-	Out_Headers = Temp_Headers;
-	return true;
 }
 
 bool UHttpRequestWf::GetHeader(FString& ErrorCode, FString& Value, FString Key)
@@ -679,8 +488,6 @@ bool UHttpRequestWf::GetHeader(FString& ErrorCode, FString& Value, FString Key)
 		ErrorCode = "FF HTTP WF : Task for HTTP Request is null !";
 		return false;
 	}
-
-	FString TempValue;
 
 	try
 	{
@@ -692,7 +499,16 @@ bool UHttpRequestWf::GetHeader(FString& ErrorCode, FString& Value, FString Key)
 			return false;
 		}
 
-		TempValue = UTF8_TO_TCHAR(HttpHeaderMap(TempReq).get(TCHAR_TO_UTF8(*Key)).c_str());
+		const FString TempValue = UTF8_TO_TCHAR(HttpHeaderMap(TempReq).get(TCHAR_TO_UTF8(*Key)).c_str());
+
+		if (TempValue.IsEmpty())
+		{
+			ErrorCode = "FF HTTP WF : HTTP request header is exist but value is empty !";
+			return false;
+		}
+
+		Value = TempValue;
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -702,15 +518,6 @@ bool UHttpRequestWf::GetHeader(FString& ErrorCode, FString& Value, FString Key)
 
 		return false;
 	}
-
-	if (TempValue.IsEmpty())
-	{
-		ErrorCode = "FF HTTP WF : HTTP request header is exist but value is empty !";
-		return false;
-	}
-
-	Value = TempValue;
-	return true;
 }
 
 bool UHttpRequestWf::GetBody(FString& Out_Body)
@@ -720,11 +527,10 @@ bool UHttpRequestWf::GetBody(FString& Out_Body)
 		return false;
 	}
 
-	FString TempBody;
-
 	try
 	{
-		TempBody = UTF8_TO_TCHAR(HttpUtil::decode_chunked_body(this->Task->get_req()).c_str());
+		Out_Body = UTF8_TO_TCHAR(HttpUtil::decode_chunked_body(this->Task->get_req()).c_str());
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -734,14 +540,6 @@ bool UHttpRequestWf::GetBody(FString& Out_Body)
 
 		return false;
 	}
-
-	if (TempBody.IsEmpty())
-	{
-		return false;
-	}
-
-	Out_Body = TempBody;
-	return true;
 }
 
 bool UHttpRequestWf::GetMethod(FString& Out_Method)
@@ -751,11 +549,10 @@ bool UHttpRequestWf::GetMethod(FString& Out_Method)
 		return false;
 	}
 
-	FString TempMethod;
-
 	try
 	{
-		TempMethod = this->Task->get_req()->get_method();
+		Out_Method = this->Task->get_req()->get_method();
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -765,9 +562,6 @@ bool UHttpRequestWf::GetMethod(FString& Out_Method)
 
 		return false;
 	}
-
-	Out_Method = TempMethod;
-	return true;
 }
 
 bool UHttpRequestWf::GetContentLenght(int64& Out_Lenght)
@@ -777,11 +571,10 @@ bool UHttpRequestWf::GetContentLenght(int64& Out_Lenght)
 		return false;
 	}
 
-	int64 TempLenght = 0;
-
 	try
 	{
-		TempLenght = this->Task->get_req()->get_parser()->content_length;
+		Out_Lenght = this->Task->get_req()->get_parser()->content_length;
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -791,9 +584,6 @@ bool UHttpRequestWf::GetContentLenght(int64& Out_Lenght)
 
 		return false;
 	}
-
-	Out_Lenght = TempLenght;
-	return true;
 }
 
 bool UHttpRequestWf::GetClientAddress(FString& Out_Address)
@@ -803,12 +593,12 @@ bool UHttpRequestWf::GetClientAddress(FString& Out_Address)
 		return false;
 	}
 
-	FString IpString;
-	FString PortString;
-	FString TempAddress;
-
 	try
 	{
+		FString IpString;
+		FString PortString;
+
+		FString TempAddress;
 		sockaddr SocketAddress;
 		memset(&SocketAddress, 0, sizeof(SocketAddress));
 		socklen_t SocketLenght = sizeof(SocketAddress);
@@ -827,6 +617,9 @@ bool UHttpRequestWf::GetClientAddress(FString& Out_Address)
 		IpString.AppendChars(IP_Address, sizeof(IP_Address));
 		PortString.AppendChars(Port, sizeof(Port));
 		TempAddress = FString::Printf(TEXT("%s:%s"), *IpString, *PortString);
+
+		Out_Address = TempAddress;
+		return true;
 	}
 
 	catch (const std::exception& Exception)
@@ -836,7 +629,4 @@ bool UHttpRequestWf::GetClientAddress(FString& Out_Address)
 
 		return false;
 	}
-	
-	Out_Address = TempAddress;
-	return true;
 }
